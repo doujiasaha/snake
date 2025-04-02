@@ -14,7 +14,7 @@ screen.tracer(0)
 snake = Snake()
 food = Food()
 scoreboard = Scoreboard()
-score = 0
+
 
 
 screen.listen()
@@ -30,13 +30,24 @@ while game_is_on:
     time.sleep(0.1)
     snake.move()
     
-    #collision
+    #collision with food
     if snake.head.distance(food) < 15:
         food.refresh()
-        score += 1
+        snake.extend()
+        scoreboard.increase_score()
         scoreboard.erase()
-        scoreboard.write(f"Score: {score}", False, align="center", font=("Arial", 12, "normal"))
+        scoreboard.score_up()
+    
+    #collision with wall
+    if snake.head.xcor() > 280 or snake.head.xcor() < -280 or snake.head.ycor() > 280 or snake.head.ycor() < -280:
+        scoreboard.game_over()
+        game_is_on=False
 
+    #collision with tail
+    for part in snake.snake_parts[1:]:
+        if snake.head.distance(part) < 10:
+            game_is_on = False
+            scoreboard.game_over()
         
     
         
